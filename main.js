@@ -27,9 +27,9 @@ function showToggleNotif(){
     }
     if (activeNotifs['toggle-notif']){
         duplicateToggleNotifCount += 1 
-        setTimeout(function(){showNotif('toggle-notif', false, 2300); document.getElementById('toggle-set').innerHTML = "switched to <b>" + currentTheme + " theme</b>. " + crossSessionPersistence; duplicateToggleNotifCount -= 1;}, (3100*duplicateToggleNotifCount)+(100*duplicateToggleNotifCount))
+        setTimeout(function(){showNotif('toggle-notif', false, 2300); document.getElementById('toggle-set').innerHTML = "Switched to <b>" + currentTheme + " theme</b>. " + crossSessionPersistence; duplicateToggleNotifCount -= 1;}, (3100*duplicateToggleNotifCount)+(100*duplicateToggleNotifCount))
     } else {
-        document.getElementById('toggle-set').innerHTML = "switched to <b>"+ themes[toggle] + " theme</b>. " + crossSessionPersistence
+        document.getElementById('toggle-set').innerHTML = "Switched to <b>"+ themes[toggle] + " theme</b>. " + crossSessionPersistence
         showNotif('toggle-notif', false, 2300)
     }
 }
@@ -186,10 +186,10 @@ function showThemeNotif(theme){
     held = false
     let themeNotif = document.getElementById("theme-notif")
     if (source == "system"){
-        document.getElementById("theme-set").innerHTML = "automatically enabled <b> " + theme + " theme</b> based on your system theme." + document.getElementById("theme-set").innerHTML;
+        document.getElementById("theme-set").innerHTML = "Automatically enabled <b> " + theme + " theme</b> based on your system theme." + document.getElementById("theme-set").innerHTML;
     } else {
         document.getElementById("theme-set").style.fontSize = ".85rem";
-        document.getElementById("theme-set").innerHTML = "automatically enabled <b> " + theme + " theme</b> based on your previous session." + document.getElementById("theme-set").innerHTML;
+        document.getElementById("theme-set").innerHTML = "Automatically enabled <b> " + theme + " theme</b> based on your previous session." + document.getElementById("theme-set").innerHTML;
     }
     showNotif('theme-notif', true);
 }
@@ -221,7 +221,7 @@ function initTheming(show){
             }
         }
         themeToggle.innerHTML = "<i class=\"fas fa-sun fa-xs\"></i>";
-        themeToggle.title = "switch to light theme.";
+        themeToggle.title = "Switch to light theme.";
         themeToggle.style.marginBottom = "0";
     } else {
         try {
@@ -238,7 +238,7 @@ function initTheming(show){
             }
         }
         themeToggle.innerHTML = "<i class=\"fas fa-moon fa-xs\"></i>";
-        themeToggle.title = "switch to dark theme.";
+        themeToggle.title = "Switch to dark theme.";
         themeToggle.style.marginBottom = "0";
     }
     //apply theme transitions
