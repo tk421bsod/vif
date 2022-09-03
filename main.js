@@ -1,6 +1,11 @@
-themes = {true:'dark', false:'light'}
-activeNotifs = {}
-duplicateToggleNotifCount = 0
+'use strict';
+let themes = {true:'dark', false:'light'}
+let activeNotifs = {};
+let duplicateToggleNotifCount = 0;
+let source = ""
+let held = false
+let notifEndAnimDelay = 500
+let notifEndAnim = null
 
 function getCookies(){
     document.cookie.split(";").forEach(function(cookie){let intermediate=cookie.split("=");cookies[intermediate[0]]=intermediate[1];});
@@ -158,8 +163,6 @@ function showNotif(name, closable, delay){
     }
     if (closable){
         //notification closable?? add the respective listeners...
-        //TODO: sanity check for whether notif is actually closable
-        // ^ what the fuck does this mean
         //mouse events
         notifElem.addEventListener("mouseover", function(){addCloseButton(name)});
         notifElem.addEventListener("mouseover", holdNotif);
@@ -182,9 +185,9 @@ function showNotif(name, closable, delay){
 }
 
 function showThemeNotif(theme){
-    console.log("Showing theme notif")
+    console.log("Showing theme notif");
     held = false
-    let themeNotif = document.getElementById("theme-notif")
+    let themeNotif = document.getElementById("theme-notif");
     if (source == "system"){
         document.getElementById("theme-set").innerHTML = "Automatically enabled <b> " + theme + " theme</b> based on your system theme." + document.getElementById("theme-set").innerHTML;
     } else {
@@ -196,9 +199,9 @@ function showThemeNotif(theme){
 
 function initTheming(show){
     document.getElementById('theme-button').addEventListener("click", toggleTheme);
-    let loading = document.getElementById("loading")
+    let loading = document.getElementById("loading");
     if (loading){
-        loading.remove()
+        loading.remove();
     }
     cookies = {};
     getCookies();
