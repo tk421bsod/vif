@@ -6,6 +6,8 @@ let source = ""
 let held = false
 let notifEndAnimDelay = 500
 let notifEndAnim = null
+let toggle = null
+let added = false
 
 function getCookies(){
     document.cookie.split(";").forEach(function(cookie){let intermediate=cookie.split("=");cookies[intermediate[0]]=intermediate[1];});
@@ -41,15 +43,15 @@ function showToggleNotif(){
 
 function toggleTheme(){
     toggle = ! getCurrentTheme();
-    initTheming();
+    initTheming(false);
     showToggleNotif();
 }
 
 function getCurrentTheme(){
     // true == dark theme, false == light theme
-    try {
+    if (toggle != null){
         return toggle
-    } catch (error){
+    } else {
         console.log("toggled not set!") //toggled not set yet? check cookies
     }
     if (cookies['theme']){
@@ -210,12 +212,11 @@ function initTheming(show){
     let themeToggle = document.getElementById('theme-toggle');
     let themeButton = document.getElementById('theme-button');
     if (theme == true){
-        try {
-            toggle == true;
+        if (toggle != true) {
             toggle = true;
             applyDarkStyling();
             document.body.style.opacity = "1";
-        } catch (error){
+        } else {
             applyDarkStyling();
             document.body.style.opacity = "1";
             if (show){
@@ -227,12 +228,12 @@ function initTheming(show){
         themeToggle.title = "Switch to light theme.";
         themeToggle.style.marginBottom = "0";
     } else {
-        try {
+        if (toggle != true) {
             toggle == false;
             toggle = false;
             applyLightStyling();
             document.body.style.opacity = "1";
-        } catch (error){
+        } else {
             applyLightStyling();
             document.body.style.opacity = "1";
             if (show){
@@ -273,4 +274,9 @@ if(window.location.href.includes('#main-content')){
     setTimeout(function(){window.scrollTo(0,0);}, 50);
 }
 
-window.addEventListener("DOMContentLoaded", function(){console.log("changing opacity`");document.body.style.opacity = 0})
+function changeOpacity(){
+    console.log("changing opacity");
+    document.body.style.opacity = 0
+}
+
+window.addEventListener("DOMContentLoaded", changeOpacity())
