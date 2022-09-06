@@ -214,32 +214,24 @@ function initTheming(show){
     if (theme == true){
         if (toggle != true) {
             toggle = true;
-            applyDarkStyling();
-            document.body.style.opacity = "1";
-        } else {
-            applyDarkStyling();
-            document.body.style.opacity = "1";
-            if (show){
-                getCookies()
-                showThemeNotif("dark")
-            }
+        } 
+        applyDarkStyling();
+        document.body.style.opacity = "1";
+        if (show){
+            getCookies()
+            showThemeNotif("dark")
         }
         themeToggle.innerHTML = "<i class=\"fas fa-sun fa-xs\"></i>";
         themeToggle.title = "Switch to light theme.";
         themeToggle.style.marginBottom = "0";
     } else {
-        if (toggle != true) {
-            toggle == false;
-            toggle = false;
-            applyLightStyling();
-            document.body.style.opacity = "1";
-        } else {
-            applyLightStyling();
-            document.body.style.opacity = "1";
-            if (show){
-                getCookies()
-                showThemeNotif("light");
-            }
+        applyLightStyling();
+        document.body.style.opacity = "1";
+        applyLightStyling();
+        document.body.style.opacity = "1";
+        if (show){
+            getCookies()
+            showThemeNotif("light");
         }
         themeToggle.innerHTML = "<i class=\"fas fa-moon fa-xs\"></i>";
         themeToggle.title = "Switch to dark theme.";
