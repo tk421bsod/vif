@@ -95,7 +95,7 @@ function addCloseButton(name){
     }
     console.log("adding close button")
     document.getElementById(name+'-close').style.transform = "scale(1, 1)";
-    document.getElementById(name).style.width = "445px";
+    document.getElementById(name).style.width = "455px";
     added = true
 }
 
@@ -105,7 +105,7 @@ function removeCloseButton(name){
     }
     console.log("removing close button")
     document.getElementById(name+'-close').style.transform = "scale(0.01, 0.01)";
-    document.getElementById(name).style.width = "430px";
+    document.getElementById(name).style.width = "440px";
     added = false
 }
 
@@ -238,25 +238,9 @@ function initTheming(show){
         themeToggle.style.marginBottom = "0";
     }
     //apply theme transitions
+    //TODO remove i hate this
     if (typeof toggle !== 'undefined'){
-        document.body.style.transition = "background-color 0.6s ease-in-out, color 0.6s ease-in-out, transform 0.6s ease-in-out";
-        for (const each of document.getElementsByTagName("li")){
-            each.style.transition = "background-color 0.6s ease-in-out, color 0.6s ease-in-out";
-        }
-        for (const each of document.getElementsByTagName("ul")){
-            each.style.transition = "background-color 0.6s ease-in-out, color 0.6s ease-in-out";
-        }
-        for (const each of document.getElementsByClassName("a")){
-            if (each.className.startsWith("link-")){
-                each.style.transition = "background-color 0.6s ease-in-out, color 0.6s ease-in-out";
-            }
-        }
-        for (const each of document.getElementsByTagName("input")){
-            each.style.transition = "background-color 0.6s ease-in-out, color 0.6s ease-in-out";
-        }
-        for (const each of document.getElementsByClassName("modal")){
-            each.style.transition = "background-color 0.6s ease-in-out, color 0.6s ease-in-out";
-        }
+        document.body.style.transition = "background-color 0.6s ease-in-out, color 0.6s ease-in-out, transform 0.6s ease-in-out !important";
     }
 }
 
