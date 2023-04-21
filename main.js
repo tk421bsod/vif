@@ -95,7 +95,8 @@ function addCloseButton(name){
     }
     console.log("adding close button")
     document.getElementById(name+'-close').style.transform = "scale(1, 1)";
-    document.getElementById(name).style.width = "455px";
+    document.getElementById(name).style.width = "33em";
+    document.getElementById(name+'-main').style.marginRight = "1em";
     added = true
 }
 
@@ -106,6 +107,7 @@ function removeCloseButton(name){
     console.log("removing close button")
     document.getElementById(name+'-close').style.transform = "scale(0.01, 0.01)";
     document.getElementById(name).style.width = "440px";
+    document.getElementById(name+'-main').style.marginRight = "0";
     added = false
 }
 
