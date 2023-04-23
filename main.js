@@ -93,10 +93,14 @@ function addCloseButton(name){
     } catch(error){
         added = true
     }
+    if (('ontouchstart' in window)||(navigator.maxTouchPoints>0)||(navigator.msMaxTouchPoints>0)){
+        return
+    }
     console.log("adding close button")
     document.getElementById(name+'-close').style.transform = "scale(1, 1)";
-    document.getElementById(name).style.width = "33em";
-    document.getElementById(name+'-main').style.marginRight = "1em";
+    document.getElementById(name+'-close').style.marginLeft = "-1em";
+    document.getElementById(name+'-close').style.left = "calc(30em + 0.3vmin)";
+    document.getElementById(name+'-main').style.marginRight = "calc(0.9em + 0.1vmin)";
     added = true
 }
 
@@ -106,7 +110,6 @@ function removeCloseButton(name){
     }
     console.log("removing close button")
     document.getElementById(name+'-close').style.transform = "scale(0.01, 0.01)";
-    document.getElementById(name).style.width = "440px";
     document.getElementById(name+'-main').style.marginRight = "0";
     added = false
 }
@@ -128,10 +131,14 @@ function hideNotif(name){
     activeNotifs[name] = null;
 }
 
-function holdNotif(){
+function holdNotif(name){
     if (held){
         console.log("Notif already held!")
         return //event handler may have gone off twice
+    }
+    if (('ontouchstart' in window)||(navigator.maxTouchPoints>0)||(navigator.msMaxTouchPoints>0)){
+        held = false
+        hideNotif(name);
     }
     console.log('Holding notif')
     clearTimeout(notifEndAnim);
@@ -169,17 +176,17 @@ function showNotif(name, closable, delay){
         //notification closable?? add the respective listeners...
         //mouse events
         notifElem.addEventListener("mouseover", function(){addCloseButton(name)});
-        notifElem.addEventListener("mouseover", holdNotif);
+        notifElem.addEventListener("mouseover", function(){holdNotif(name)});
         notifElem.addEventListener("mouseout", function(){removeCloseButton(name)});
         notifElem.addEventListener("mouseout", function(){releaseNotif(name)});
         //focus events e.g tab key
         notifElem.addEventListener("focusin", function(){addCloseButton(name)});
-        notifElem.addEventListener("focusin", holdNotif);
+        notifElem.addEventListener("focusin", function(){holdNotif(name)});
         notifElem.addEventListener("focusout", function(){removeCloseButton(name)});
         notifElem.addEventListener("focusout", function(){releaseNotif(name)});
         //touch events
         notifElem.addEventListener("touchstart", function(){addCloseButton(name)});
-        notifElem.addEventListener("touchstart", holdNotif);
+        notifElem.addEventListener("touchstart", function(){holdNotif(name)});
         notifElem.addEventListener("touchend", function(){removeCloseButton(name)});
         notifElem.addEventListener("touchend", function(){releaseNotif(name)});
     }
@@ -195,7 +202,7 @@ function showThemeNotif(theme){
     if (source == "system"){
         document.getElementById("theme-set").innerHTML = "Automatically enabled <b> " + theme + " theme</b> based on your system theme." + document.getElementById("theme-set").innerHTML;
     } else {
-        document.getElementById("theme-set").style.fontSize = ".85rem";
+        document.getElementById("theme-set").style.fontSize = "calc(.70rem + 0.3vmin)";
         document.getElementById("theme-set").innerHTML = "Automatically enabled <b> " + theme + " theme</b> based on your previous session." + document.getElementById("theme-set").innerHTML;
     }
     showNotif('theme-notif', true);
@@ -220,8 +227,8 @@ function initTheming(show){
         applyDarkStyling();
         document.body.style.opacity = "1";
         if (show){
-            getCookies()
-            showThemeNotif("dark")
+            getCookies();
+            showThemeNotif("dark");
         }
         themeToggle.innerHTML = "<i class=\"fas fa-sun fa-xs\"></i>";
         themeToggle.title = "Switch to light theme.";
@@ -229,10 +236,8 @@ function initTheming(show){
     } else {
         applyLightStyling();
         document.body.style.opacity = "1";
-        applyLightStyling();
-        document.body.style.opacity = "1";
         if (show){
-            getCookies()
+            getCookies();
             showThemeNotif("light");
         }
         themeToggle.innerHTML = "<i class=\"fas fa-moon fa-xs\"></i>";
@@ -251,10 +256,3 @@ function initTheming(show){
 if(window.location.href.includes('#main-content')){
     setTimeout(function(){window.scrollTo(0,0);}, 50);
 }
-
-function changeOpacity(){
-    console.log("changing opacity");
-    document.body.style.opacity = 0
-}
-
-window.addEventListener("DOMContentLoaded", changeOpacity())
