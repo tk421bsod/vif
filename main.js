@@ -199,10 +199,10 @@ function showThemeNotif(theme){
     console.log("Showing theme notif");
     held = false
     let themeNotif = document.getElementById("theme-notif");
+    document.getElementById("theme-set").style.fontSize = "calc(.70rem + 0.3vmin)";
     if (source == "system"){
         document.getElementById("theme-set").innerHTML = "Automatically enabled <b> " + theme + " theme</b> based on your system theme." + document.getElementById("theme-set").innerHTML;
     } else {
-        document.getElementById("theme-set").style.fontSize = "calc(.70rem + 0.3vmin)";
         document.getElementById("theme-set").innerHTML = "Automatically enabled <b> " + theme + " theme</b> based on your previous session." + document.getElementById("theme-set").innerHTML;
     }
     showNotif('theme-notif', true);
