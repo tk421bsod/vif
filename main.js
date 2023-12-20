@@ -1,4 +1,5 @@
 'use strict';
+
 let themes = {true:'dark', false:'light'}
 let activeNotifs = {};
 let duplicateToggleNotifCount = 0;
@@ -37,7 +38,7 @@ function showToggleNotif(){
         setTimeout(function(){showNotif('toggle-notif', false, 2300); document.getElementById('toggle-set').innerHTML = "Switched to <b>" + currentTheme + " theme</b>. " + crossSessionPersistence; duplicateToggleNotifCount -= 1;}, (3100*duplicateToggleNotifCount)+(100*duplicateToggleNotifCount))
     } else {
         document.getElementById('toggle-set').innerHTML = "Switched to <b>"+ themes[toggle] + " theme</b>. " + crossSessionPersistence
-        showNotif('toggle-notif', false, 2300)
+        showNotif('toggle-notif', false, 2300);
     }
 }
 
@@ -52,11 +53,11 @@ function getCurrentTheme(){
     if (toggle != null){
         return toggle
     } else {
-        console.log("toggled not set!") //toggled not set yet? check cookies
+        console.log("toggled not set!"); //toggled not set yet? check cookies
     }
     if (cookies['theme']){
         source = "cookie"
-        console.log("cookie is set, setting theme to " + cookies['theme'])
+        console.log("cookie is set, setting theme to " + cookies['theme']);
         return cookies['theme'] == "dark" //true == dark, false == light
     }
     console.log("cookie not set!") //cookie not set? check system theme
@@ -65,24 +66,100 @@ function getCurrentTheme(){
         return window.matchMedia("(prefers-color-scheme:dark)").matches;
     } catch (error){
         //browser doesn't support this? default to dark theme
-        return true
+        return true;
+    }
+}
+
+function swapComponents(OLD_THEME, NEW_THEME, componentName, inverted){
+    if (inverted){
+        let oldThemeCopy = OLD_THEME;
+        OLD_THEME = NEW_THEME;
+        NEW_THEME = oldThemeCopy;
+    }
+    let components = document.querySelectorAll("." + componentName + "-" + OLD_THEME);
+    let oldName = componentName + "-" + OLD_THEME;
+    let newName = componentName + "-" + NEW_THEME;
+    for (const each of components){
+        each.className = each.className.replace(oldName, newName);
+    }
+}
+
+function applyStylingForTag(OLD_THEME, NEW_THEME, target, inverted){
+    if (inverted){
+        let oldThemeCopy = OLD_THEME;
+        OLD_THEME = NEW_THEME;
+        NEW_THEME = oldThemeCopy;
+    }
+    let newColor = "";
+    let newBackgroundColor = "";
+    if (NEW_THEME == "light"){
+        newColor = "#36393f";
+        newBackgroundColor = "white";
+    } else {
+        newColor = "white";
+        newBackgroundColor = "#36393f";
+    }
+    for (const elem of document.querySelectorAll(target)){
+        //Don't theme navigation elements for now.
+        if (elem.className.includes("nav")){
+            continue
+        };
+        elem.style.color = newColor;
+        elem.style.backgroundColor = newBackgroundColor;
+    }
+}
+
+function applyStyling(foreground, background){
+    let NEW_THEME = "";
+    let OLD_THEME = "";
+    //Set our master background and foreground colors.
+    document.body.style.color = foreground;
+    document.body.style.backgroundColor = background;
+    if (background == "white"){ //TODO: Replace with module-level constants for colors.
+        NEW_THEME = "light"; //light theme
+        OLD_THEME = "dark";
+    } else {
+        NEW_THEME = "dark";
+        OLD_THEME = "light";
+    }
+    applyStylingForTag(OLD_THEME, NEW_THEME, 'input', false);
+    //Swap out our Bootstrap components for ones that match the new theme.
+    swapComponents(OLD_THEME, NEW_THEME, 'btn-outline', true);
+    swapComponents(OLD_THEME, NEW_THEME, 'link', true);
+    //Then apply theme-specific styling to other elements.
+    applyStylingForTag(OLD_THEME, NEW_THEME, 'li', false);
+    applyStylingForTag(OLD_THEME, NEW_THEME, 'ul', false);
+    applyStylingForTag(OLD_THEME, NEW_THEME, 'ol', false);
+    //TODO: page-specific styling things? maybe pages could register callbacks
+    //Toast close buttons are special.
+    for (const elem of document.getElementsByClassName('btn-close')){
+        if (NEW_THEME == "dark" && (! elem.className.includes("btn-close-white"))){
+            elem.className += "btn-close-white";
+        } else {
+            elem.className = elem.className.replace("btn-close-white", "");
+        }
+    }
+    //Toasts are special too.
+    for (const elem of document.getElementsByClassName("toast")){
+        elem.style.color = foreground;
+        elem.style.backgroundColor = background;
     }
 }
 
 function applyLightStyling(){
-    console.log("switching to light theme")
+    console.log("switching to light theme");
     if (cookies['accepted']){
-        document.cookie = "theme=light"
+        document.cookie = "theme=light";
     }
-    document.body.style.color = "#36393f"; document.body.style.backgroundColor = "white"; for (const each of document.getElementsByClassName('btn')){each.className = each.className.replace('btn-outline-light', 'btn-outline-dark')}; for (const each of document.getElementsByTagName('a')){each.className = each.className.replace('link-light', 'link-dark')}; for (const each of document.getElementsByTagName('li')){if (each.className.includes("nav")){continue}; each.style.backgroundColor="white"; each.style.color="#36393f";}; for (const each of document.getElementsByTagName('ul')){if (each.className.includes("nav")){continue};each.style.backgroundColor="white"; each.style.color="#36393f";};if (document.getElementsByClassName("commit-link")){for (const link of document.getElementsByClassName("commit-link")){link.style.color = "#36393f"}}; for (const elem of document.getElementsByTagName("input")){elem.style.backgroundColor = "white"; elem.style.color = "#36393f";}for (const elem of document.getElementsByClassName("toast")){elem.style.color = "black"; elem.style.backgroundColor = "white";} for (const elem of document.getElementsByClassName('btn-close')){elem.className = elem.className.replace("btn-close-white", "")}
+    applyStyling("#36393f", "white");
 }
 
 function applyDarkStyling(){
-    console.log("switching to dark theme")
+    console.log("switching to dark theme");
     if (cookies['accepted']){
-        document.cookie = "theme=dark"
+        document.cookie = "theme=dark";
     }
-     document.body.style.color = "white"; document.body.style.backgroundColor = "#36393f"; for (const each of document.getElementsByClassName('btn')){each.className = each.className.replace('btn-outline-dark', 'btn-outline-light')}; for (const each of document.getElementsByTagName('a')){each.className = each.className.replace('link-dark', 'link-light')}; for (const each of document.getElementsByTagName('li')){if (each.className.includes("nav")){continue}; each.style.backgroundColor="#36393f"; each.style.color="white";}; for (const each of document.getElementsByTagName('ul')){if (each.className.includes("nav")){continue};each.style.backgroundColor="#36393f"; each.style.color="white";}; if (document.getElementsByClassName("commit-link")){for (const link of document.getElementsByClassName("commit-link")){link.style.color = "white"}}for (const elem of document.getElementsByTagName("input")){elem.style.backgroundColor = "#36393f"; elem.style.color = "white";} for (const elem of document.getElementsByClassName("toast")){elem.style.color = "white"; elem.style.backgroundColor = "#36393f";} for (const elem of document.getElementsByClassName('btn-close')){if (! elem.className.includes("btn-close-white")){elem.className += " btn-close-white"}} for (const each of document.getElementsByClassName('modal')){each.style.color = "white"} for (const each of document.getElementsByClassName('modal-content')){each.style.backgroundColor="#36393f"}
+    applyStyling("white", "#36393f")
 }
 
 function addCloseButton(name){
