@@ -1,7 +1,10 @@
 'use strict';
+//Our sole export. Public methods and attributes must be added and modified here.
+let vif = {};
 
 let themes = {true:'dark', false:'light'}
 let activeNotifs = {};
+let cookies = {};
 let duplicateToggleNotifCount = 0;
 let source = ""
 let held = false
@@ -9,6 +12,16 @@ let notifEndAnimDelay = 500
 let notifEndAnim = null
 let toggle = null
 let added = false
+let LIGHT_BACKGROUND = "#ffffff"
+let LIGHT_FOREGROUND = "#36393f"
+let DARK_BACKGROUND = "#36393f"
+let DARK_FOREGROUND = "#ffffff"
+
+//Make our light and dark constants public.
+vif.LIGHT_BACKGROUND = LIGHT_BACKGROUND
+vif.LIGHT_FOREGROUND = LIGHT_FOREGROUND
+vif.DARK_BACKGROUND = DARK_BACKGROUND
+vif.DARK_FOREGROUND = DARK_FOREGROUND
 
 function getCookies(){
     document.cookie.split(";").forEach(function(cookie){let intermediate=cookie.split("=");cookies[intermediate[0]]=intermediate[1];});
@@ -71,6 +84,15 @@ function getCurrentTheme(){
 }
 
 function swapComponents(OLD_THEME, NEW_THEME, componentName, inverted){
+    let newColor = "";
+    let newBackgroundColor = "";
+    if (NEW_THEME == "light"){
+        newColor = vif.LIGHT_FOREGROUND;
+        newBackgroundColor = vif.LIGHT_BACKGROUND;
+    } else {
+        newColor = vif.DARK_FOREGROUND;
+        newBackgroundColor = vif.DARK_BACKGROUND;
+    }
     if (inverted){
         let oldThemeCopy = OLD_THEME;
         OLD_THEME = NEW_THEME;
@@ -81,6 +103,8 @@ function swapComponents(OLD_THEME, NEW_THEME, componentName, inverted){
     let newName = componentName + "-" + NEW_THEME;
     for (const each of components){
         each.className = each.className.replace(oldName, newName);
+        each.style.color = newColor;
+        each.style.backgroundColor = newBackgroundColor;
     }
 }
 
@@ -93,11 +117,11 @@ function applyStylingForTag(OLD_THEME, NEW_THEME, target, inverted){
     let newColor = "";
     let newBackgroundColor = "";
     if (NEW_THEME == "light"){
-        newColor = "#36393f";
-        newBackgroundColor = "white";
+        newColor = vif.LIGHT_FOREGROUND;
+        newBackgroundColor = vif.LIGHT_BACKGROUND;
     } else {
-        newColor = "white";
-        newBackgroundColor = "#36393f";
+        newColor = vif.DARK_FOREGROUND;
+        newBackgroundColor = vif.DARK_BACKGROUND;
     }
     for (const elem of document.querySelectorAll(target)){
         //Don't theme navigation elements for now.
@@ -115,10 +139,12 @@ function applyStyling(foreground, background){
     //Set our master background and foreground colors.
     document.body.style.color = foreground;
     document.body.style.backgroundColor = background;
-    if (background == "white"){ //TODO: Replace with module-level constants for colors.
+    if (background == vif.LIGHT_BACKGROUND){
+        console.log("Applying light theme styling.")
         NEW_THEME = "light"; //light theme
         OLD_THEME = "dark";
     } else {
+        console.log("Applying dark theme styling.")
         NEW_THEME = "dark";
         OLD_THEME = "light";
     }
@@ -130,17 +156,20 @@ function applyStyling(foreground, background){
     applyStylingForTag(OLD_THEME, NEW_THEME, 'li', false);
     applyStylingForTag(OLD_THEME, NEW_THEME, 'ul', false);
     applyStylingForTag(OLD_THEME, NEW_THEME, 'ol', false);
+    //Modals are special.
+    //applyStylingForTag uses querySelectorAll so all we need to do is target a class instead of a tag
+    applyStylingForTag(OLD_THEME, NEW_THEME, '.modal-content', false)
     //TODO: page-specific styling things? maybe pages could register callbacks
     //Toast close buttons are special.
-    for (const elem of document.getElementsByClassName('btn-close')){
+    for (const elem of document.querySelectorAll('.btn-close')){
         if (NEW_THEME == "dark" && (! elem.className.includes("btn-close-white"))){
-            elem.className += "btn-close-white";
+            elem.className += " btn-close-white";
         } else {
-            elem.className = elem.className.replace("btn-close-white", "");
+            elem.className = elem.className.replace(" btn-close-white", "");
         }
     }
     //Toasts are special too.
-    for (const elem of document.getElementsByClassName("toast")){
+    for (const elem of document.querySelectorAll(".toast")){
         elem.style.color = foreground;
         elem.style.backgroundColor = background;
     }
@@ -151,7 +180,7 @@ function applyLightStyling(){
     if (cookies['accepted']){
         document.cookie = "theme=light";
     }
-    applyStyling("#36393f", "white");
+    applyStyling(vif.LIGHT_FOREGROUND, vif.LIGHT_BACKGROUND);
 }
 
 function applyDarkStyling(){
@@ -159,7 +188,7 @@ function applyDarkStyling(){
     if (cookies['accepted']){
         document.cookie = "theme=dark";
     }
-    applyStyling("white", "#36393f")
+    applyStyling(vif.DARK_FOREGROUND, vif.DARK_BACKGROUND)
 }
 
 function addCloseButton(name){
@@ -276,7 +305,7 @@ function showThemeNotif(theme){
     console.log("Showing theme notif");
     held = false
     let themeNotif = document.getElementById("theme-notif");
-    document.getElementById("theme-set").style.fontSize = "calc(.70rem + 0.3vmin)";
+    document.getElementById("theme-set").style.fontSize = "calc(.69rem + 0.3vmin)";
     if (source == "system"){
         document.getElementById("theme-set").innerHTML = "Automatically enabled <b> " + theme + " theme</b> based on your system theme." + document.getElementById("theme-set").innerHTML;
     } else {
@@ -291,7 +320,6 @@ function initTheming(show){
     if (loading){
         loading.remove();
     }
-    cookies = {};
     getCookies();
     console.log("initializing theming")
     let theme = getCurrentTheme();
@@ -328,8 +356,5 @@ function initTheming(show){
     }
 }
 
-//sometimes the page will scroll a bit too far when using the 'Skip to content' link
-//this is an attempt to fix that
-if(window.location.href.includes('#main-content')){
-    setTimeout(function(){window.scrollTo(0,0);}, 50);
-}
+vif.initTheming = initTheming;
+export default vif;
